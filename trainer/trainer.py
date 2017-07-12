@@ -4,6 +4,7 @@ import csv
 
 from curriculum import Curriculum
 from evaluator import Evaluator
+from visualizer import Visualizer
 
 class Trainer(object):
     """
@@ -12,10 +13,12 @@ class Trainer(object):
 
         Args:
             curriculum (Curriculum): the curriculum for the training
+            visualizer (Visualizer): the Visualizer used to produce figures for the Curriculum
             evaluator (Evaluator): the Evaluator used to compare the training and the objectives
     """
-    def __init__(self, curriculum, evaluator=None):
+    def __init__(self, curriculum, visualizer=None, evaluator=None):
         self._curriculum = curriculum
+        self._visualizer = visualizer
         self._evaluator = evaluator if isinstance(evaluator, Evaluator) else Evaluator()
 
     def train(self, output_path, training_callback):
@@ -33,6 +36,7 @@ class Trainer(object):
 
         # File configuration
         training_file_name = "{0}.csv".format(time.strftime("%Y%m%d-%H%M%S"))
+        training_visualization_name = "{0}.png".format(time.strftime("%Y%m%d-%H%M%S"))
         training_file_data = []
         # The headers are built using these default values + the name of the activies, objectives, results and evaluation
         training_file_headers = ["id", "time_start", "time_stop"]
@@ -61,10 +65,17 @@ class Trainer(object):
             data = [index, time_start, time_stop, activities, objectives, results, evaluation]
             training_file_data.append(data)
             self.save_data(output_path, training_file_name, training_file_headers, training_file_data)
-            # @TODO create the charts with the Visualizer
+            # Add the data to the Visualization if defined
+            if self._visualizer is not None:
+                self._visualizer.add_results(activities, objectives, results, evaluation)
+                # Output the plot at each iteration
+                plt = self._visualizer.visualize()
+                plt.savefig(output_path + "/" + training_visualization_name)
+                plt.cla()
 
             self._curriculum.next()
             index += 1
+
 
     def save_data(self, output_path, file_name, headers, data):
         with open(output_path + "/" + file_name, "wb") as csvfile:

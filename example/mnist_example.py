@@ -7,6 +7,8 @@ import chainer.links as L
 from chainer.dataset import convert
 
 from trainer.curriculum import Curriculum
+from trainer.visualizer import Visualizer
+from trainer.visualizer import VisualizerDefinition
 from trainer.program import Program
 from trainer.target import Target
 
@@ -91,8 +93,15 @@ def main():
     curriculum.add(Program({"n_units": 1000, "n_outs": 10, "batch_size": 100, "epoch": 1}, [Target.lte("loss", 0.05), Target.gte("accuracy", 0.2)]))
     curriculum.add(Program({"n_units": 1000, "n_outs": 10, "batch_size": 128, "epoch": 1}, [Target.lte("loss", 0.05), Target.gte("accuracy", 0.3)]))
 
+    # Define figures to visualize the training
+    # VisualizerDefinition: x_axis = activites.key, y_axis = results.key
+    visualizer = Visualizer([
+        VisualizerDefinition("batch_size", "loss", "Compare loss for hyperparameter: batch_size, iteration #1"),
+        VisualizerDefinition("batch_size", "accuracy", "Compare accurary for hyperparameter: accuracy, iteration #1")
+    ])
+
     # Defines the trainer
-    trainer = Trainer(curriculum)
+    trainer = Trainer(curriculum, visualizer)
 
     # Defines the trainer callback
     # Called at each training iteration and should call the network with the parameters defined in the activity
