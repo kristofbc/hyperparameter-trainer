@@ -12,6 +12,11 @@ Think of chainer-trainer like a gym curriculum:
 * "activities": are what defines a Program
 * "objectives": are the target of a Program. They're defined by Target: {objective} {operator} {result}. i.e: loss < 0.2
 
+## Installation
+```bash
+$ pip install git+ssh://git@github.jp.honda-ri.com/Research/hyperparameter-trainer.git
+```
+
 ## Examples
 A simple MNIST network example is provided in `example/mnist_example.py` and can be run by:
 ```bash
