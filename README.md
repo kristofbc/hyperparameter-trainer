@@ -54,11 +54,12 @@ trainer.train("./example/output", trainer_callback)
 ```
 6. For this example the output patch specified above `./example/output` contain 2 files
 * Example of a generated CSV:
-|                                                                                                                                                                                                         | 
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
-| id,time_start,time_stop,time_diff,n_units_activity,epoch_activity,n_outs_activity,batch_size_activity,loss_objective,accuracy_objective,loss_result,accuracy_result,loss_evaluation,accuracy_evaluation | 
-| 0,1499911851.068811,1499911873.701255,22.632444143295288,1000,1,10,64,0.19,0.941,0.18154194204012553,0.9457333333333333,True,True                                                                       | 
-| 1,1499911874.298902,1499911890.028886,15.729984045028687,1000,1,10,100,0.19,0.941,0.19183134109402697,0.9421833368142446,False,True                                                                     | 
-| 2,1499911890.24943,1499911904.711509,14.462079048156738,1000,1,10,128,0.19,0.941,0.19775271045764287,0.9411333333333334,False,True                                                                      | 
+
+| id | time_start | time_stop | time_diff | n_units_activity | epoch_activity | n_outs_activity | batch_size_activity | loss_objective | accuracy_objective | loss_result | accuracy_result | loss_evaluation | accuracy_evaluation |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | 1499911851.068811 | 1499911873.701255 | 22.632444143295288 | 1000 | 1 | 10 | 64 | 0.19 | 0.941 | 0.18154194204012553 | 0.9457333333333333 | True | True |
+| 1 | 1499911874.298902 | 1499911890.028886 | 15.729984045028687 | 1000 | 1 | 10 | 100 | 0.19 | 0.941 | 0.19183134109402697 | 0.9421833368142446 | False | True |
+| 2 | 1499911890.24943 | 1499911904.711509 | 14.462079048156738 | 1000 | 1 | 10 | 128 | 0.19 | 0.941 | 0.19775271045764287 | 0.9411333333333334 | False | True |
+ 
 * Example of generated figures:
 ![figure](/example/output/20170713-111051.png)
