@@ -43,7 +43,7 @@ class Visualizer(object):
             
             # Loop through all the results obtained from a Program
             min_x, max_x, min_y, max_y = 0, 0, 0, 0
-            data_x, data_y, prog_eval = [], [], []
+            data_x, data_y, prog_eval, index_annotation = [], [], [], 0
             for j in xrange(len(self._results)):
                 activities, objectives, results, evaluations = self._results[j]
 
@@ -55,6 +55,7 @@ class Visualizer(object):
                     raise ValueError("Unable to construct the figure: the axis_y_key is not in the results list")
                 data_y.append(results[axis_y_key])
                 
+                index_annotation += 1
                 prog_eval.append("blue" if evaluations[axis_y_key] is True else "red")
 
             # Build the figure
@@ -64,8 +65,11 @@ class Visualizer(object):
             if creation_callback is not None:
                 creation_callback(plt, definition)
             else:
-                plt.subplot("{0}{1}{2}".format(2, 1, i+1))
+                plt.subplot("{0}{1}{2}".format(len(self._definitions), 1, i+1))
                 plt.scatter(data_x, data_y, color=prog_eval)
+                # Add the index on the plot
+                for j in xrange(index_annotation):
+                    plt.annotate(j, (data_x[j], data_y[j]))
                 plt.xlabel(axis_x_key)
                 plt.ylabel(axis_y_key)
                 plt.title(title, y=1.08)
