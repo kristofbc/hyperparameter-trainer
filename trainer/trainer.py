@@ -39,7 +39,7 @@ class Trainer(object):
         training_visualization_name = "{0}.png".format(time.strftime("%Y%m%d-%H%M%S"))
         training_file_data = []
         # The headers are built using these default values + the name of the activies, objectives, results and evaluation
-        training_file_headers = ["id", "time_start", "time_stop"]
+        training_file_headers = ["id", "time_start", "time_stop", "time_diff"]
         current = self._curriculum.current()
         training_file_headers = training_file_headers + [key + "_activity" for key in current.get_activities().keys()]
         training_file_headers = training_file_headers + map(lambda objective: objective.get_objective() + "_objective", current.get_objectives())
@@ -62,7 +62,7 @@ class Trainer(object):
             evaluation = self._evaluator.compare(results, objectives)
             
             # Save the data of this training
-            data = [index, time_start, time_stop, activities, objectives, results, evaluation]
+            data = [index, time_start, time_stop, time_stop-time_start, activities, objectives, results, evaluation]
             training_file_data.append(data)
             self.save_data(output_path, training_file_name, training_file_headers, training_file_data)
             # Add the data to the Visualization if defined
@@ -84,17 +84,17 @@ class Trainer(object):
             writer.writerow(headers)
             for index in xrange(len(data)):
                 line = data[index]
-                buff = [line[0], line[1], line[2]]
+                buff = [line[0], line[1], line[2], line[3]]
                 # activity
-                buff = buff + line[3].values()
-                for objective in line[4]:
+                buff = buff + line[4].values()
+                for objective in line[5]:
                     # objective
                     buff.append(objective.get_value())
-                for objective in line[4]:
-                    if objective.get_objective() in line[5]:
+                for objective in line[5]:
+                    if objective.get_objective() in line[6]:
                         # results
-                        buff.append(line[5][objective.get_objective()])
-                buff = buff + line[6].values()
+                        buff.append(line[6][objective.get_objective()])
+                buff = buff + line[7].values()
                 writer.writerow(buff)
 
 

@@ -81,7 +81,7 @@ class Target(object):
 
     def compare(self, value):
         """
-            Compare this Target to the value
+            Compare the value to this Target
 
             Args:
                 value (str|int): the value to compare
@@ -89,17 +89,17 @@ class Target(object):
                 (boolean)
         """
         if self._operator == ">":
-            return self._value > value
+            return value > self._value
         elif self._operator == ">=":
-            return self._value >= value
+            return value >= self._value
         elif self._operator == "=":
-            return self._value == value
+            return value == self._value
         elif self._operator == "<":
-            return self._value < value
+            return value < self._value
         elif self._operator == "<=":
-            return self._value <= value
+            return value <= self._value
         elif self._operator == "!=":
-            return self._operator != value
+            return value != self._value
         
         raise ValueError("Operator not found for {}".format(self._operator))
 
