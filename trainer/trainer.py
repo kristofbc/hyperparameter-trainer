@@ -5,6 +5,7 @@ import csv
 from curriculum import Curriculum
 from evaluator import Evaluator
 from visualizer import Visualizer
+from session import Session
 
 class Trainer(object):
     """
@@ -20,8 +21,9 @@ class Trainer(object):
         self._curriculum = curriculum
         self._visualizer = visualizer
         self._evaluator = evaluator if isinstance(evaluator, Evaluator) else Evaluator()
+        self._session = None
 
-    def train(self, output_path, training_callback):
+    def train(self, output_path, training_callback, session_name="default"):
         """
             Execute the training process for the network
             For each new iteration inside the curriculum call the training_callback
@@ -30,6 +32,7 @@ class Trainer(object):
             Args:
                 output_path (str): output path for the training results
                 training_callback (function(activities):dict): called for each iteration
+                session_name (str): name of the training session
         """
         if not os.path.exists(output_path):
             raise ValueError("Provided output path does not exists")
@@ -47,22 +50,18 @@ class Trainer(object):
         training_file_headers = training_file_headers + map(lambda objective: objective.get_objective() + "_result", current.get_objectives())
         training_file_headers = training_file_headers + map(lambda objective: objective.get_objective() + "_evaluation", current.get_objectives())
 
-        index = 0
-        while self._curriculum.has_next():
-            # Evaluate the current program in the curriculum
-            program = self._curriculum.current()
+        # The training Session use to train the network with the Curriculum
+        self._session = Session(session_name)
+        
+        # Each time results are yield from the network
+        def results_callback(results, program, time_start, time_stop):
             activities = program.get_activities()
             objectives = program.get_objectives()
 
-            print("Training curriculum #{}".format(index+1))
-            print(activities)
-            time_start = time.time()
-            results = training_callback(activities)
-            time_stop = time.time()
             evaluation = self._evaluator.compare(results, objectives)
             
             # Save the data of this training
-            data = [index, time_start, time_stop, time_stop-time_start, activities, objectives, results, evaluation]
+            data = [time_start, time_stop, time_stop-time_start, activities, objectives, results, evaluation]
             training_file_data.append(data)
             self.save_data(output_path, training_file_name, training_file_headers, training_file_data)
             # Add the data to the Visualization if defined
@@ -73,9 +72,7 @@ class Trainer(object):
                 plt.savefig(output_path + "/" + training_visualization_name)
                 plt.cla()
 
-            self._curriculum.next()
-            index += 1
-
+        self._session.start(self._curriculum, training_callback, results_callback)
 
     def save_data(self, output_path, file_name, headers, data):
         with open(output_path + "/" + file_name, "wb") as csvfile:
@@ -84,17 +81,17 @@ class Trainer(object):
             writer.writerow(headers)
             for index in xrange(len(data)):
                 line = data[index]
-                buff = [line[0], line[1], line[2], line[3]]
+                buff = [index, line[0], line[1], line[2]]
                 # activity
-                buff = buff + line[4].values()
-                for objective in line[5]:
+                buff = buff + line[3].values()
+                for objective in line[4]:
                     # objective
                     buff.append(objective.get_value())
-                for objective in line[5]:
-                    if objective.get_objective() in line[6]:
+                for objective in line[4]:
+                    if objective.get_objective() in line[5]:
                         # results
-                        buff.append(line[6][objective.get_objective()])
-                buff = buff + line[7].values()
+                        buff.append(line[5][objective.get_objective()])
+                buff = buff + line[6].values()
                 writer.writerow(buff)
 
 

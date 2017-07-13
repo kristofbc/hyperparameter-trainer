@@ -34,7 +34,6 @@ class Visualizer(object):
                 (pyplot)
         """
         # For all the definitions, generate the corresponding plot
-        gs = gridspec.GridSpec(len(self._definitions), len(self._definitions))
         for i in xrange(len(self._definitions)):
             definition = self._definitions[i]
             title = definition.get_title()
@@ -64,7 +63,7 @@ class Visualizer(object):
             if creation_callback is not None:
                 creation_callback(plt, definition)
             else:
-                plt.subplot("{0}{1}{2}".format(2, 1, i+1))
+                plt.subplot("{0}{1}{2}".format(len(self._definitions), 1, i+1))
                 plt.scatter(data_x, data_y, color=prog_eval)
                 plt.xlabel(axis_x_key)
                 plt.ylabel(axis_y_key)
