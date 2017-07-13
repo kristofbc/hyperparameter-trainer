@@ -89,15 +89,15 @@ def network(n_units, n_out, batch_size, epochs):
 def main():
     # Define a curriculum for the training
     curriculum = Curriculum()
-    curriculum.add(Program({"n_units": 1000, "n_outs": 10, "batch_size": 64, "epoch": 1}, [Target.lte("loss", 0.05), Target.gte("accuracy", 0.1)]))
-    curriculum.add(Program({"n_units": 1000, "n_outs": 10, "batch_size": 100, "epoch": 1}, [Target.lte("loss", 0.05), Target.gte("accuracy", 0.2)]))
-    curriculum.add(Program({"n_units": 1000, "n_outs": 10, "batch_size": 128, "epoch": 1}, [Target.lte("loss", 0.05), Target.gte("accuracy", 0.3)]))
+    curriculum.add(Program({"n_units": 1000, "n_outs": 10, "batch_size": 64, "epoch": 1}, [Target.lte("loss", 0.19), Target.gte("accuracy", 0.941)]))
+    curriculum.add(Program({"n_units": 1000, "n_outs": 10, "batch_size": 100, "epoch": 1}, [Target.lte("loss", 0.19), Target.gte("accuracy", 0.941)]))
+    curriculum.add(Program({"n_units": 1000, "n_outs": 10, "batch_size": 128, "epoch": 1}, [Target.lte("loss", 0.19), Target.gte("accuracy", 0.941)]))
 
     # Define figures to visualize the training
     # VisualizerDefinition: x_axis = activites.key, y_axis = results.key
     visualizer = Visualizer([
         VisualizerDefinition("batch_size", "loss", "Compare loss for hyperparameter: batch_size, iteration #1"),
-        VisualizerDefinition("batch_size", "accuracy", "Compare accurary for hyperparameter: accuracy, iteration #1")
+        VisualizerDefinition("batch_size", "accuracy", "Compare accuracy for hyperparameter: accuracy, iteration #1")
     ])
 
     # Defines the trainer
@@ -111,7 +111,7 @@ def main():
         # Values that will be used in trainer and will be compared to the Targets
         return {"loss": sum_loss, "accuracy": sum_accuracy}
 
-    trainer.train("./", trainer_callback)
+    trainer.train("./example/output", trainer_callback)
 
 
 if __name__ == '__main__':

@@ -59,12 +59,16 @@ class Visualizer(object):
 
             # Build the figure
             plt.figure(1)
-
-            plt.subplot("{0}{1}{2}".format(2, 1, i+1))
-            plt.scatter(data_x, data_y, color=prog_eval)
-            plt.xlabel(axis_x_key)
-            plt.ylabel(axis_y_key)
-            plt.title(title, y=1.08)
+            # If there's a creation callback, let the user code handle that
+            creation_callback = definition.get_creation_callback()
+            if creation_callback is not None:
+                creation_callback(plt, definition)
+            else:
+                plt.subplot("{0}{1}{2}".format(2, 1, i+1))
+                plt.scatter(data_x, data_y, color=prog_eval)
+                plt.xlabel(axis_x_key)
+                plt.ylabel(axis_y_key)
+                plt.title(title, y=1.08)
 
         plt.tight_layout()
         return plt
@@ -72,10 +76,11 @@ class Visualizer(object):
 
 class VisualizerDefinition(object):
 
-    def __init__(self, axis_x, axis_y, title, **kwargs):
+    def __init__(self, axis_x, axis_y, title, creation_callback=None):
         self._axis_x = axis_x
         self._axis_y = axis_y
         self._title = title
+        self._creation_callback = creation_callback
 
     def get_axis_x(self):
         return self._axis_x
@@ -85,3 +90,8 @@ class VisualizerDefinition(object):
 
     def get_title(self):
         return self._title
+
+    def get_creation_callback(self):
+        return self._creation_callback
+
+
