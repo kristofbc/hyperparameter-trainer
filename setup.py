@@ -1,6 +1,6 @@
 from setuptools import setup
 
-with open('README.rst') as f:
+with open('README.md') as f:
     long_description = f.read()
 
 setup(
@@ -12,7 +12,7 @@ setup(
     license='MIT',
     author='Kristof Boucher Charbonneau',
     author_email='k.charbonneau@jp.honda-ri.com',
-    packages=['hyperparameter-trainer'],
+    packages=['trainer'],
     entry_points={ },
     include_package_data=True,
     classifiers=[
