@@ -1,6 +1,7 @@
 import os
 import time
 import csv
+import numpy as np
 
 from curriculum import Curriculum
 from evaluator import Evaluator
@@ -35,7 +36,7 @@ class Trainer(object):
             raise ValueError("Provided output path does not exists")
 
         # File configuration
-        training_file_name = "{0}.csv".format(time.strftime("%Y%m%d-%H%M%S"))
+        training_file_name = "{0}".format(time.strftime("%Y%m%d-%H%M%S"))
         training_visualization_name = "{0}.png".format(time.strftime("%Y%m%d-%H%M%S"))
         training_file_data = []
         # The headers are built using these default values + the name of the activies, objectives, results and evaluation
@@ -78,23 +79,32 @@ class Trainer(object):
 
 
     def save_data(self, output_path, file_name, headers, data):
-        with open(output_path + "/" + file_name, "wb") as csvfile:
+        lines = []
+        for index in xrange(len(data)):
+            line = data[index]
+            buff = [line[0], line[1], line[2], line[3]]
+            # activity
+            buff = buff + line[4].values()
+            for objective in line[5]:
+                # objective
+                buff.append(objective.get_value())
+            for objective in line[5]:
+                if objective.get_objective() in line[6]:
+                    # results
+                    buff.append(line[6][objective.get_objective()])
+            buff = buff + line[7].values()
+            lines.append(buff)
+
+        # CSV file
+        with open(output_path + "/" + file_name + ".csv", "wb") as csvfile:
             writer = csv.writer(csvfile, delimiter=",")
             # @TODO: should write at the bottom of the file and not overwrite each time
             writer.writerow(headers)
-            for index in xrange(len(data)):
-                line = data[index]
-                buff = [line[0], line[1], line[2], line[3]]
-                # activity
-                buff = buff + line[4].values()
-                for objective in line[5]:
-                    # objective
-                    buff.append(objective.get_value())
-                for objective in line[5]:
-                    if objective.get_objective() in line[6]:
-                        # results
-                        buff.append(line[6][objective.get_objective()])
-                buff = buff + line[7].values()
-                writer.writerow(buff)
+            for i in xrange(len(lines)):
+                writer.writerow(lines[i])
+
+        # NPY file
+        np_data = np.array(lines)
+        np.save(output_path + "/" + file_name, np_data)
 
 
